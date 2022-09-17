@@ -1,4 +1,4 @@
-# Skrypt do dzielenia zdjecia na wiele tile'i
+# Image manipulation tool to split image into tiles
 # python ~/scripts/splitter.py --path__Path --t_size__Tile_size --out__Output_path
 
 import os
@@ -29,7 +29,25 @@ if 'x' in tile_size:
 else:
     tile_size_x = int(tile_size)
     tile_size_y = int(tile_size)
-images = [] if os.path.isdir(args.path) else [args.path]
+
+image_extensions = [
+    '.jpg',
+    '.jpeg',
+    '.tif',
+    '.bmp',
+    '.png',
+]
+
+
+def check_image_file(image):
+    for image_ext in image_extensions:
+        if image.endswith(image_ext):
+            return True
+    return False
+
+
+images = [args.path + '/' + image for image in os.listdir(args.path) if check_image_file(
+    image)] if os.path.isdir(args.path) else [args.path]
 
 
 def split_image(image_path):
