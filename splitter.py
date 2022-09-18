@@ -26,7 +26,7 @@ except ImportError:
     rich_printing = False
 
 platform_path = '/'
-if sys.platform =='win32':
+if sys.platform == 'win32':
     platform_path = '\\'
 
 image_path = args.path[:-1] if args.path.endswith(platform_path) else args.path
@@ -49,6 +49,7 @@ image_extensions = [
     '.tif',
     '.bmp',
     '.png',
+    '.gif'
 ]
 
 
@@ -104,7 +105,7 @@ def split_image(image_path):
 
     out_folder_path = out_path + platform_path + \
         image_path.split(platform_path)[-1].replace('.' +
-                                          image_path.split('.')[-1], '_tiled')
+                                                    image_path.split('.')[-1], '_tiled')
     if os.path.exists(out_folder_path):
         rmtree(out_folder_path)
 
@@ -113,7 +114,7 @@ def split_image(image_path):
     image = Image.open(image_path)
     width, height = image.size
     image_name = image_path.split(platform_path)[-1].replace('.' +
-                                                   image_path.split('.')[-1], '')
+                                                             image_path.split('.')[-1], '')
     image_ext = image_path.split('.')[-1]
 
     if rich_printing:
@@ -131,7 +132,8 @@ def split_image(image_path):
     # creating tiles
     while True:
         image_tile = image.crop((left, top, right, bottom))
-        image_tile.save(out_folder_path + f'/{image_name}_{top}_{left}.{image_ext}')
+        image_tile.save(out_folder_path +
+                        f'/{image_name}_{top}_{left}.{image_ext}')
         if right == width and bottom == height:
             break
         if right == width:
@@ -155,13 +157,6 @@ def split_image(image_path):
 for image in images:
     try:
         split_image(image)
-        if rich_printing:
-            console = Console()
-            text = Text()
-            text.append("\n< Done >\n", style="bold green")
-            console.print(text)
-        else:
-            print('\nDone\n')
 
     except Exception as err:
         if rich_printing:
@@ -172,3 +167,11 @@ for image in images:
             console.print(text)
         else:
             print(f'Error: {err}')
+
+if rich_printing:
+    console = Console()
+    text = Text()
+    text.append("< Done >\n", style="bold green")
+    console.print(text)
+else:
+    print('Done\n')
