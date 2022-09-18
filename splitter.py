@@ -5,10 +5,6 @@ import os
 from shutil import rmtree
 from PIL import Image
 import argparse
-from rich.console import Console
-from rich import print
-from rich.text import Text
-from rich.panel import Panel
 from PIL import Image
 
 Image.MAX_IMAGE_PIXELS = 933120000
@@ -18,6 +14,15 @@ parser.add_argument('--path', type=str, required=True)
 parser.add_argument('--t_size', type=str, required=True)
 parser.add_argument('--out', type=str, required=True)
 args = parser.parse_args()
+
+rich_printing = True
+try:
+    from rich.console import Console
+    from rich import print
+    from rich.text import Text
+    from rich.panel import Panel
+except ImportError:
+    rich_printing = False
 
 tile_size = args.t_size
 tile_size_x = 0
@@ -50,24 +55,16 @@ images = [args.path + '/' + image for image in os.listdir(args.path) if check_im
     image)] if os.path.isdir(args.path) else [args.path]
 
 
-def split_image(image_path):
-    if os.path.exists(args.out) == False:
-        os.mkdir(args.out)
+def print_image_info(image_name, image_ext, width, height, tile_size_x, tile_size_y):
+    # Image info
+    print(f"Image Name: {image_name}.{image_ext}")
+    print(f"Width: {width}")
+    print(f"Height: {height}")
+    print(f'Extension: {image_ext}')
+    print(f"Tile size: {tile_size_x}x{tile_size_y}")
 
-    out_path = args.out + '/' + \
-        image_path.split('/')[-1].replace('.' +
-                                          image_path.split('.')[-1], '_tiled')
-    if os.path.exists(out_path):
-        rmtree(out_path)
 
-    os.mkdir(out_path)
-
-    image = Image.open(image_path)
-    width, height = image.size
-    image_name = image_path.split('/')[-1].replace('.' +
-                                                   image_path.split('.')[-1], '')
-    image_ext = image_path.split('.')[-1]
-
+def print_rich_image_info(image_name, image_ext, width, height, tile_size_x, tile_size_y):
     # Image info
     console = Console()
 
@@ -90,12 +87,38 @@ def split_image(image_path):
     text.append(f"{image_ext}\n", style='bold blue')
     text.append("Tile size: ")
     text.append(f"{tile_size_x}x{tile_size_y}\n", style='bold blue')
+    console.print(text)
+
+
+def split_image(image_path):
+    if os.path.exists(args.out) == False:
+        os.mkdir(args.out)
+
+    out_path = args.out + '/' + \
+        image_path.split('/')[-1].replace('.' +
+                                          image_path.split('.')[-1], '_tiled')
+    if os.path.exists(out_path):
+        rmtree(out_path)
+
+    os.mkdir(out_path)
+
+    image = Image.open(image_path)
+    width, height = image.size
+    image_name = image_path.split('/')[-1].replace('.' +
+                                                   image_path.split('.')[-1], '')
+    image_ext = image_path.split('.')[-1]
+
+    if rich_printing:
+        print_rich_image_info(image_name, image_ext, width,
+                              height, tile_size_x, tile_size_y)
+    else:
+        print_image_info(image_name, image_ext, width,
+                         height, tile_size_x, tile_size_y)
 
     top = 0
     bottom = tile_size_y
     right = tile_size_x
     left = 0
-    console.print(text)
 
     # creating tiles
     while True:
@@ -124,14 +147,20 @@ def split_image(image_path):
 for image in images:
     try:
         split_image(image)
-        console = Console()
-        text = Text()
-        text.append("\n< Done >\n", style="bold green")
-        console.print(text)
+        if rich_printing:
+            console = Console()
+            text = Text()
+            text.append("\n< Done >\n", style="bold green")
+            console.print(text)
+        else:
+            print('\nDone\n')
 
     except Exception as err:
-        console = Console()
-        text = Text()
-        text.append(f"Error: ", style="bold red")
-        text.append(f"{err}\n", style="bold white")
-        console.print(text)
+        if rich_printing:
+            console = Console()
+            text = Text()
+            text.append(f"Error: ", style="bold red")
+            text.append(f"{err}\n", style="bold white")
+            console.print(text)
+        else:
+            print(f'Error: {err}')

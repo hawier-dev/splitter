@@ -8,8 +8,8 @@ Inspired by: [pnytko/splitter](https://github.com/pnytko/splitter)
 
 ```bash
 python3
-rich
 pillow
+rich # optional
 ```
 
 ## Using
