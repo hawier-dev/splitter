@@ -1,5 +1,7 @@
 # Splitter
 
+![Splitter showcase](./showcase.gif)
+
 Image manipulation tool to split **images** into **tiles**.
 
 Inspired by: [pnytko/splitter](https://github.com/pnytko/splitter)
