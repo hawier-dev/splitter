@@ -1,4 +1,4 @@
-# Splitter
+# Python Image Splitter
 
 ![Splitter showcase](./showcase.gif)
 
