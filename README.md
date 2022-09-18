@@ -14,13 +14,13 @@ rich # optional
 
 ## Using
 
-If you want to split image into **Squares**.
+If you want to split the image into **Squares**.
 
 ```bash
 python splitter.py --path {path_to_photo} --t_size 16 --out {output_path}
 ```
 
-If you want to split image into **Rectangles**.
+If you want to split the image into **Rectangles**.
 
 ```bash
 python splitter.py --path {path_to_photo} --t_size 16x8 --out {output_path}
