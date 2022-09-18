@@ -6,6 +6,7 @@ from shutil import rmtree
 from PIL import Image
 import argparse
 from PIL import Image
+import sys
 
 Image.MAX_IMAGE_PIXELS = 933120000
 
@@ -23,6 +24,13 @@ try:
     from rich.panel import Panel
 except ImportError:
     rich_printing = False
+
+platform_path = '/'
+if sys.platform =='win32':
+    platform_path = '\\'
+
+image_path = args.path[:-1] if args.path.endswith(platform_path) else args.path
+out_path = args.out[:-1] if args.out.endswith(platform_path) else args.out
 
 tile_size = args.t_size
 tile_size_x = 0
@@ -51,8 +59,8 @@ def check_image_file(image):
     return False
 
 
-images = [args.path + '/' + image for image in os.listdir(args.path) if check_image_file(
-    image)] if os.path.isdir(args.path) else [args.path]
+images = [image_path + platform_path + image for image in os.listdir(image_path) if check_image_file(
+    image)] if os.path.isdir(image_path) else [image_path]
 
 
 def print_image_info(image_name, image_ext, width, height, tile_size_x, tile_size_y):
@@ -91,20 +99,20 @@ def print_rich_image_info(image_name, image_ext, width, height, tile_size_x, til
 
 
 def split_image(image_path):
-    if os.path.exists(args.out) == False:
-        os.mkdir(args.out)
+    if os.path.exists(out_path) == False:
+        os.mkdir(out_path)
 
-    out_path = args.out + '/' + \
-        image_path.split('/')[-1].replace('.' +
+    out_folder_path = out_path + platform_path + \
+        image_path.split(platform_path)[-1].replace('.' +
                                           image_path.split('.')[-1], '_tiled')
-    if os.path.exists(out_path):
-        rmtree(out_path)
+    if os.path.exists(out_folder_path):
+        rmtree(out_folder_path)
 
-    os.mkdir(out_path)
+    os.mkdir(out_folder_path)
 
     image = Image.open(image_path)
     width, height = image.size
-    image_name = image_path.split('/')[-1].replace('.' +
+    image_name = image_path.split(platform_path)[-1].replace('.' +
                                                    image_path.split('.')[-1], '')
     image_ext = image_path.split('.')[-1]
 
@@ -123,7 +131,7 @@ def split_image(image_path):
     # creating tiles
     while True:
         image_tile = image.crop((left, top, right, bottom))
-        image_tile.save(out_path + f'/{image_name}_{top}_{left}.{image_ext}')
+        image_tile.save(out_folder_path + f'/{image_name}_{top}_{left}.{image_ext}')
         if right == width and bottom == height:
             break
         if right == width:
