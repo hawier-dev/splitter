@@ -16,6 +16,8 @@ rich # optional
 
 ## Using
 
+[Tutorial](https://hawier.dev/projects/image_manipulation/python-image-splitter.html#tutorial)
+
 If you want to split the image into **Squares**.
 
 ```bash
