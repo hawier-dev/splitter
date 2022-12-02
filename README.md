@@ -13,7 +13,7 @@ pillow
 
 ## Using
 
-[Tutorial](https://hawier.dev/projects/image_manipulation/python-image-splitter.html#tutorial)
+[Tutorial](https://hawier.dev/projects/image_manipulation/python_image_splitter.html#tutorial)
 
 If you want to split the image into **Squares**.
 
