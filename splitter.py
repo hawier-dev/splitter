@@ -1,7 +1,5 @@
 """
-Splitter
-
-Split image into tiles of specified size
+Split image into tiles of specified size.
 
 Usage:
     python splitter.py --path <image_path> --t_size <tile_size_x>x<tile_size_y> --out <out_path>
@@ -21,7 +19,13 @@ Image.MAX_IMAGE_PIXELS = 933120000
 
 def parse_args():
     parser = argparse.ArgumentParser("Split image into tiles of specified size")
-    parser.add_argument("-p", "--path", type=str, required=True, help="Path to image")
+    parser.add_argument(
+        "-p",
+        "--path",
+        type=str,
+        required=True,
+        help="Path to image",
+    )
     parser.add_argument(
         "-t",
         "--t_size",
@@ -29,7 +33,13 @@ def parse_args():
         required=True,
         help="Tile size in format <tile_size_x>x<tile_size_y>",
     )
-    parser.add_argument("-o", "--out", type=str, required=True, help="Output path")
+    parser.add_argument(
+        "-o",
+        "--out",
+        type=str,
+        required=True,
+        help="Output path",
+    )
     args = parser.parse_args()
 
     if os.path.isdir(args.path):
@@ -49,13 +59,17 @@ def parse_args():
 
     tile_size = args.t_size.split("x")
 
-    if type(tile_size) == list:
+    if len(tile_size) == 2:
         tile_size_x = int(tile_size[0])
         tile_size_y = int(tile_size[1])
 
+    elif len(tile_size) == 1:
+        tile_size_x = int(tile_size[0])
+        tile_size_y = int(tile_size[0])
+
     else:
-        tile_size_x = int(tile_size)
-        tile_size_y = int(tile_size)
+        print("Tile size must be in format <tile_size_x>x<tile_size_y>")
+        sys.exit()
 
     return files, tile_size_x, tile_size_y, args.out
 
