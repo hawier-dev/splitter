@@ -17,6 +17,15 @@ import sys
 Image.MAX_IMAGE_PIXELS = 933120000
 
 
+def success_print(title, message):
+    print(f"\033[92m{title}\033[0m: {message}")
+
+
+def error_print(title, message):
+    print(f"\033[91m{title}\033[0m: {message}")
+    exit(1)
+
+
 def parse_args():
     parser = argparse.ArgumentParser("Split image into tiles of specified size")
     parser.add_argument(
@@ -54,11 +63,15 @@ def parse_args():
         files = []
 
     if not files:
-        print("No images found in specified path")
+        error_print("Error", "No images found in specified path")
         sys.exit()
 
-    tile_size = args.t_size.split("x")
+    if len(files) > 1:
+        success_print("Found", f"{len(files)} images")
+    else:
+        success_print("Found", f"{len(files)} image")
 
+    tile_size = args.t_size.split("x")
     if len(tile_size) == 2:
         tile_size_x = int(tile_size[0])
         tile_size_y = int(tile_size[1])
@@ -68,8 +81,10 @@ def parse_args():
         tile_size_y = int(tile_size[0])
 
     else:
-        print("Tile size must be in format <tile_size_x>x<tile_size_y>")
+        error_print("Error", "Tile size must be in format <tile_size_x>x<tile_size_y>")
         sys.exit()
+
+    success_print("Tile size", f"{tile_size_x}x{tile_size_y}")
 
     return files, tile_size_x, tile_size_y, args.out
 
@@ -133,6 +148,7 @@ def split_image(image_path, out_path, tile_size_x, tile_size_y):
 def main():
     files, tile_size_x, tile_size_y, out_path = parse_args()
     for file in files:
+        success_print("Splitting", file)
         split_image(file, out_path, tile_size_x, tile_size_y)
 
 
